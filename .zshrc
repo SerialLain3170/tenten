@@ -1,10 +1,8 @@
-#
+
 # .zshrc is sourced in interactive shells.
 # It should contain commands to set up aliases,
 # functions, options, key bindings, etc.
 #
-PROMPT="%K{blue}%m:%c%k %# "
-
 autoload -U compinit
 compinit
 
@@ -60,6 +58,7 @@ setopt auto_pushd
 setopt correct
 setopt list_packed
 setopt auto_cd
+setopt prompt_subst
 
 # alias
 alias -s py=python
@@ -84,3 +83,32 @@ alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/cli/macro.sh
+
+. $HOME/.asdf/asdf.sh
+function peco-src () {
+  local selected_dir=$(ghq list -p | peco --prompt="repositories >" --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N peco-src
+bindkey '^]' peco-src
+
+source ~/.zsh/.git-prompt.sh
+
+fpath=(~/.zsh $fpath)
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+autoload -Uz compinit && compinit
+
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUPSTREAM=auto
+
+PROMPT='%B%K{blue}%n@%m:$(echo ${${:-/${(j:/:)${(M)${(s:/:)${(D)PWD:h}}#(|.)[^.]}}/${PWD:t}}//\/~/\~})%#%k%K{red}$(__git_ps1 "(%s)")%k > %b'
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"

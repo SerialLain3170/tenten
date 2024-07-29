@@ -1,7 +1,7 @@
 cd
 
 # Git install
-apt-get install -y git 
+apt-get install -y git zsh
 
 # python install
 
@@ -26,6 +26,8 @@ sudo apt-get update -y; sudo apt-get install -y make build-essential libssl-dev 
 libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm peco \
 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev vim tmux wget
 
+cp ./tenten/.tmux.conf .
+
 pyenv install 3.9.12
 pyenv local 3.9.12
 
@@ -34,18 +36,23 @@ mkdir ~/.zsh
 cd ./.zsh
 git clone https://github.com/zsh-users/zsh-autosuggestions.git
 cd
+cp ./tenten/.git-prompt.sh ./.zsh/
+cp ./tenten/.zshrc .
 
 # vim setting
 mkdir ~/.vim
-cd ./.zsh
+cd ./.vim
 mkdir autoload
 cd ./autoload
-wget https://github.com/junegunn/vim-plug/blob/master/plug.vim
+git clone https://github.com/junegunn/vim-plug.git
+mv vim-plug/vim-plug.vim .
 cd ../
 mkdir colors
 cd ./colors
-wget https://github.com/tomasr/molokai/blob/master/colors/molokai.vim
+git clone https://github.com/tomasr/molokai.git
+mv molokai/colors/molokai.vim .
 cd
+cp ./tenten/.vimrc .
 
 # ghq setting
 git clone https://github.com/asdf-vm/asdf ~/.asdf
@@ -59,3 +66,4 @@ source ~/.zshrc
 touch ~/.tool-versions
 echo "ghq 1.3.0" >> ~/.tool-versions
 
+cp -r ./tenten/cli .
